@@ -1,1 +1,640 @@
 # evangelium
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evangelium — монтаж экспертных рилс</title>
+    <!-- Современные шрифты: Clash Display для заголовков, Inter для текста -->
+    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0C0C0C;
+            font-family: 'Inter', sans-serif;
+            color: #E5E5E5;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Только легкая текстура, без иероглифов */
+        .bg-texture {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 30%, rgba(100, 30, 30, 0.03) 0%, transparent 60%),
+                        repeating-linear-gradient(45deg, rgba(255,255,255,0.01) 0px, rgba(255,255,255,0.01) 2px, transparent 2px, transparent 8px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Навбар */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            margin-bottom: 60px;
+        }
+
+        .logo {
+            font-family: 'Clash Display', sans-serif;
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #FFFFFF, #B0B0B0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .badge {
+            background: rgba(180, 40, 40, 0.15);
+            color: #FF8A8A;
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: 1px solid rgba(180, 40, 40, 0.3);
+            backdrop-filter: blur(4px);
+        }
+
+        /* Герой */
+        .hero {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 60px;
+            margin-bottom: 100px;
+            align-items: center;
+        }
+
+        .hero-title {
+            font-family: 'Clash Display', sans-serif;
+            font-weight: 700;
+            font-size: clamp(3rem, 5vw, 4.5rem);
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            margin-bottom: 24px;
+        }
+
+        .hero-title span {
+            color: #FF6B6B;
+            border-bottom: 3px solid #FF6B6B;
+            display: inline-block;
+        }
+
+        .hero-description {
+            font-size: 1.2rem;
+            color: #A0A0A0;
+            margin-bottom: 32px;
+            max-width: 500px;
+        }
+
+        .hero-card {
+            background: rgba(20, 20, 20, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 32px;
+            padding: 32px;
+            box-shadow: 0 30px 40px -30px rgba(0,0,0,0.8);
+        }
+
+        .hero-card p {
+            margin: 16px 0;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .hero-card .emoji-bg {
+            width: 40px;
+            height: 40px;
+            background: #2A2A2A;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+
+        /* Кнопки */
+        .button-primary {
+            background: #FF6B6B;
+            color: #0C0C0C;
+            border: none;
+            padding: 18px 36px;
+            border-radius: 16px;
+            font-family: 'Clash Display', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 10px 20px -10px rgba(255, 107, 107, 0.3);
+        }
+
+        .button-primary:hover {
+            background: #FF8787;
+            transform: translateY(-2px);
+            box-shadow: 0 20px 30px -10px rgba(255, 107, 107, 0.5);
+        }
+
+        .button-outline {
+            background: transparent;
+            border: 1.5px solid rgba(255,255,255,0.1);
+            color: #FFFFFF;
+            padding: 18px 36px;
+            border-radius: 16px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            transition: 0.2s;
+        }
+
+        .button-outline:hover {
+            border-color: rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.02);
+        }
+
+        /* Сетка услуг */
+        .section-title {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 48px;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 100px;
+        }
+
+        .service-card {
+            background: #141414;
+            border: 1px solid #242424;
+            border-radius: 24px;
+            padding: 32px;
+            transition: 0.2s;
+        }
+
+        .service-card:hover {
+            border-color: #FF6B6B;
+            background: #1A1A1A;
+        }
+
+        .service-number {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: #2A2A2A;
+            line-height: 1;
+            margin-bottom: 16px;
+        }
+
+        .service-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+        }
+
+        .service-card p {
+            color: #888;
+        }
+
+        /* Цитата (легкая отсылка, без перегибов) */
+        .quote-block {
+            background: linear-gradient(145deg, #111111, #0A0A0A);
+            border-left: 4px solid #FF6B6B;
+            border-radius: 24px;
+            padding: 48px;
+            margin: 80px 0;
+            font-size: 1.5rem;
+            font-weight: 500;
+            line-height: 1.4;
+            position: relative;
+        }
+
+        .quote-author {
+            color: #FF6B6B;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 24px;
+            font-weight: 600;
+        }
+
+        /* === НОВЫЙ БЛОК: ПОРТФОЛИО === */
+        .portfolio-section {
+            margin: 100px 0;
+            text-align: center;
+        }
+
+        .portfolio-card {
+            background: linear-gradient(145deg, #141414, #0F0F0F);
+            border: 1px solid #2A2A2A;
+            border-radius: 40px;
+            padding: 60px 40px;
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: 0 30px 50px -30px #000;
+        }
+
+        .portfolio-title {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .portfolio-description {
+            color: #B0B0B0;
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+        }
+
+        .portfolio-button {
+            background: transparent;
+            border: 2px solid #FF6B6B;
+            color: #FF6B6B;
+            padding: 18px 42px;
+            border-radius: 60px;
+            font-family: 'Clash Display', sans-serif;
+            font-weight: 600;
+            font-size: 1.2rem;
+            letter-spacing: 0.02em;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            transition: 0.25s;
+        }
+
+        .portfolio-button:hover {
+            background: #FF6B6B;
+            color: #0C0C0C;
+            border-color: #FF6B6B;
+            box-shadow: 0 0 30px rgba(255, 107, 107, 0.3);
+        }
+
+        .portfolio-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 40px;
+            color: #777;
+            font-size: 0.95rem;
+        }
+
+        .portfolio-stats span {
+            color: #FF6B6B;
+            font-weight: 600;
+        }
+        /* === КОНЕЦ БЛОКА ПОРТФОЛИО === */
+
+        /* Контакты */
+        .contact-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 80px 0;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 60px;
+        }
+
+        .contact-title {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 3rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .contact-subtitle {
+            color: #888;
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            max-width: 500px;
+        }
+
+        .contact-links {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .telegram-badge {
+            background: #242628;
+            border-radius: 100px;
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: white;
+            border: 1px solid #3A3A3A;
+            transition: 0.2s;
+            font-size: 1.1rem;
+        }
+
+        .telegram-badge:hover {
+            background: #2D2F31;
+            border-color: #FF6B6B;
+        }
+
+        .telegram-badge.primary {
+            background: #FF6B6B;
+            color: #0C0C0C;
+            border: none;
+            font-weight: 600;
+        }
+
+        .telegram-badge.primary:hover {
+            background: #FF8787;
+        }
+
+        /* === ИСПРАВЛЕННЫЙ БЛОК: ТЕПЕРЬ ССЫЛКИ КЛИКАБЕЛЬНЫЕ === */
+        .quick-links-card {
+            margin-top: 40px;
+            background: #111;
+            padding: 24px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .quick-links-title {
+            color: #888;
+            margin-bottom: 16px;
+            font-size: 1rem;
+        }
+
+        .quick-link-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .quick-link-item:last-child {
+            border-bottom: none;
+        }
+
+        .quick-link-label {
+            color: #FF6B6B;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .quick-link-url {
+            font-family: monospace;
+            background: #1E1E1E;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            color: #FFB5B5;
+            text-decoration: none;
+            border: 1px solid #2A2A2A;
+            transition: 0.2s;
+            word-break: break-all;
+            max-width: 100%;
+        }
+
+        .quick-link-url:hover {
+            background: #2A2A2A;
+            border-color: #FF6B6B;
+            color: #FFFFFF;
+        }
+
+        /* Специально для мобильных, чтобы ссылки не разрывались */
+        @media (max-width: 500px) {
+            .quick-link-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .quick-link-url {
+                width: 100%;
+                text-align: center;
+            }
+        }
+        /* === КОНЕЦ ИСПРАВЛЕНИЯ === */
+
+        /* Футер */
+        .footer {
+            padding: 40px 0;
+            color: #666;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        /* Адаптация */
+        @media (max-width: 800px) {
+            .hero {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .contact-title {
+                font-size: 2.2rem;
+            }
+
+            .portfolio-card {
+                padding: 40px 20px;
+            }
+            
+            .portfolio-title {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-texture"></div>
+    
+    <div class="content">
+        <div class="container">
+            <!-- Навигация -->
+            <nav class="navbar">
+                <div class="logo">EVANGELIUM</div>
+                <div class="badge">est. 2024</div>
+            </nav>
+
+            <!-- Главный экран -->
+            <section class="hero">
+                <div>
+                    <h1 class="hero-title">
+                        Монтаж, который <span>выделяет</span> тебя
+                    </h1>
+                    <p class="hero-description">
+                        Делаю экспертные рилс визуально заметными. 15 лет, 100+ часов практики.
+                    </p>
+                    <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                        <a href="https://t.me/Evangelium_slasher" class="button-primary">Написать в Telegram</a>
+                        <a href="https://t.me/+DjQEvEGwspswMGUy" class="button-outline">Канал с работами</a>
+                    </div>
+                </div>
+                
+                <div class="hero-card">
+                    <p>
+                        <span class="emoji-bg">🎬</span>
+                        <span><strong>Иван, 15 лет</strong> — монтажёр</span>
+                    </p>
+                    <p>
+                        <span class="emoji-bg">⚡</span>
+                        <span>Специализация: экспертные рилс</span>
+                    </p>
+                    <p>
+                        <span class="emoji-bg">🎯</span>
+                        <span>Заметность видео x10</span>
+                    </p>
+                    <div style="margin-top: 24px; background: #1E1E1E; border-radius: 12px; padding: 16px; border-left: 3px solid #FF6B6B;">
+                        <span style="color: #FF6B6B; font-weight: 600;">⬇️ Связь</span><br>
+                        @Evangelium_slasher
+                    </div>
+                </div>
+            </section>
+
+            <!-- Что я делаю -->
+            <h2 class="section-title">Направления</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-number">01</div>
+                    <h3>Экспертные рилс</h3>
+                    <p>Монтирую так, что смысл остаётся, а картинка цепляет. Твои мысли становятся вирусными.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-number">02</div>
+                    <h3>Визуальное усиление</h3>
+                    <p>Цвет, ритм, динамика. Делаю видео привлекательнее без потери смысла.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-number">03</div>
+                    <h3>Заметность</h3>
+                    <p>Твой контент не затеряется в ленте. Острые монтажные решения.</p>
+                </div>
+            </div>
+
+            <!-- ========= НОВЫЙ БЛОК: ТВОЁ ПОРТФОЛИО ========= -->
+            <section class="portfolio-section">
+                <div class="portfolio-card">
+                    <h2 class="portfolio-title">Портфолио с работами</h2>
+                    <p class="portfolio-description">
+                        Здесь собраны все проекты. Можно посмотреть стиль, динамику и то, как я работаю с экспертным контентом.
+                    </p>
+                    
+                    <!-- Главная кнопка с ссылкой на канал портфолио -->
+                    <a href="https://t.me/portfolioIvana" target="_blank" class="portfolio-button">
+                        <span>📁</span> Открыть портфолио
+                    </a>
+                    
+                    <!-- Небольшая статистика для солидности (можно заменить позже) -->
+                    <div class="portfolio-stats">
+                        <div>⬆️ <span>6</span> подписчиков</div>
+                        <div>🎞️ <span>4</span> онлайн</div>
+                        <div>⚡ Обновляется</div>
+                    </div>
+                    
+                    <!-- Прямая ссылка на случай, если кнопка не сработает (или для копирования) -->
+                    <div style="margin-top: 30px; font-size: 0.9rem; color: #555; word-break: break-all;">
+                        прямая ссылка: t.me/portfolioIvana
+                    </div>
+                </div>
+            </section>
+            <!-- ========= КОНЕЦ БЛОКА ПОРТФОЛИО ========= -->
+
+            <!-- Короткая цитата -->
+            <div class="quote-block">
+                «В море однотипного контента побеждает тот, кто умеет работать с ритмом и деталями. Я делаю твои видео заметнее.»
+                <div class="quote-author">— ИВАН, МОНТАЖЁР</div>
+            </div>
+
+            <!-- Контакты (самое важное) -->
+            <section class="contact-section">
+                <h2 class="contact-title">Связь</h2>
+                <p class="contact-subtitle">Все детали проектов, портфолио и обсуждения — только в личные сообщения</p>
+                
+                <div class="contact-links">
+                    <a href="https://t.me/Evangelium_slasher" class="telegram-badge primary">
+                        <span>✈️</span> @Evangelium_slasher
+                    </a>
+                    <a href="https://t.me/+DjQEvEGwspswMGUy" class="telegram-badge">
+                        <span>📢</span> Приватный канал
+                    </a>
+                </div>
+
+                <!-- ========= ИСПРАВЛЕННЫЙ БЛОК: ТЕПЕРЬ ССЫЛКИ НАЖИМАЮТСЯ ========= -->
+                <div class="quick-links-card">
+                    <div class="quick-links-title">⚡ Быстрый доступ (нажми на ссылку):</div>
+                    
+                    <div class="quick-link-item">
+                        <span class="quick-link-label">📱 Личка:</span>
+                        <a href="https://t.me/Evangelium_slasher" target="_blank" class="quick-link-url">
+                            @Evangelium_slasher
+                        </a>
+                    </div>
+                    
+                    <div class="quick-link-item">
+                        <span class="quick-link-label">🔗 Канал:</span>
+                        <a href="https://t.me/+DjQEvEGwspswMGUy" target="_blank" class="quick-link-url">
+                            t.me/+DjQEvEGwspswMGUy
+                        </a>
+                    </div>
+
+                    <div class="quick-link-item">
+                        <span class="quick-link-label">📁 Портфолио:</span>
+                        <a href="https://t.me/portfolioIvana" target="_blank" class="quick-link-url">
+                            @portfolioIvana
+                        </a>
+                    </div>
+                </div>
+                <!-- ========= КОНЕЦ ИСПРАВЛЕНИЯ ========= -->
+            </section>
+
+            <!-- Футер -->
+            <footer class="footer">
+                <p>© 2024 Evangelium — монтаж экспертных рилс. 15 лет, Иван.</p>
+                <p style="margin-top: 8px;">По вопросам сотрудничества: @Evangelium_slasher</p>
+            </footer>
+        </div>
+    </div>
+</body>
+</html>
